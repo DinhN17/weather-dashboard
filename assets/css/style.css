@@ -4,12 +4,21 @@
     --cloud-burst: #212853;
     --orange: #ff7c00;
     --gin: #e0eae4;
+    --ivory: #fffff0;
+    --pearl: #F8F6F0;
     --borderRadius: 5px;
 }
 
 * {
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.6;
-    background-color: var(--akaroa);
+    background-color: var(--ivory);
     color: var(--cloud-burst);
+}
+
+a {
+    background-color: var(--gin);
+    color: var(--cloud-burst);
+    text-decoration: unset;
+    width: 100%;
 }

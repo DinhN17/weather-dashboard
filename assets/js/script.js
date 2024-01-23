@@ -18,30 +18,30 @@ const weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?";
 var search = {
     cityList : [],
 
-    // _checkDuplicate : function(timeBlock) {
-    //     // check if timeBlock 
-    //     for (let index = 0; index < this.notes.length; index++) {
-    //       const element = this.notes[index];
-    //       if (element.timeBlock === timeBlock) {
-    //         return index;          
-    //       }
-    //     };
-    //     return -1;
-    //   },
+    _checkDuplicate : function(name) {
+        //  
+        for (let index = 0; index < this.cityList.length; index++) {
+          const element = this.cityList[index];
+          if (element.fullName === name) {
+            return index;          
+          }
+        };
+        return -1;
+    },
   
       // saveNote gets note and save note to hourNotes in localStorage after transform to string.
       // return false/true if it failed/success to save to localStorage
     saveCity : function(city) {
         
-        this.cityList.push(city);
         
-        // check if the timeblock data has been existed. If yes, overwite it, else push it to array.
-        // var index = this._checkDuplicate(time);
-        // if (index < 0) {
-        //   this.notes.push(note);
-        // } else {
-        //   this.notes[index] = note;
-        // };
+        
+        // check if the city has been existed. If yes, remove it.
+        var index = this._checkDuplicate(city.fullName);
+        if (index >= 0) {
+          this.cityList.splice(index,1);
+        };
+
+        this.cityList.push(city);
   
         try {
           localStorage.setItem('cityList', JSON.stringify(this.cityList));
@@ -55,7 +55,7 @@ var search = {
     //   // loadNotes returns array of objects from cityList in localStorage.
     loadCities : function() {
         if (localStorage.getItem("cityList") != null) {
-            //  get string from scoreTable in localStorage and transform back to array of objects.
+            //  get string from cityList in localStorage and transform back to array of objects.
             this.cityList = JSON.parse(localStorage.getItem("cityList"));           
         };
         return this.cityList;
@@ -115,7 +115,8 @@ function renderHistorySearch() {
         // }        
             
         var cityEl = document.createElement('a');
-        cityEl.classList = 'list-item flex-row justify-space-between align-center';
+        // cityEl.classList = 'list-item flex-row justify-space-between align-center bg-secondary-subtle';
+        cityEl.classList = 'text-center bg-secondary-subtle';
         cityEl.setAttribute("data-lat", cities[i].lat);
         cityEl.setAttribute("data-lon", cities[i].lon);
         cityEl.setAttribute("data-name", cities[i].fullName);
@@ -159,6 +160,11 @@ function renderModalBody(cities, searchTerm) {
     };
 }
 
+function init() {
+  search.loadCities();
+  renderHistorySearch();
+}
+
 // var searchButtonHandler = function (event) {
 //     event.preventDefault();
 
@@ -166,6 +172,8 @@ function renderModalBody(cities, searchTerm) {
 //     console.log(city);
 // }
 // searchBtnEl.on("click", searchButtonHandler);
+
+
 
 // catch click on modalBody
 modalBody.addEventListener('click', function (event) {
@@ -220,4 +228,6 @@ if (searchModal) {
     }
     console.log(city);
   })
-}
+};
+
+init();
