@@ -16,6 +16,8 @@
     color: var(--cloud-burst);
 }
 
+h1 {color: var(--pearl);}
+
 a {
     background-color: var(--gin);
     color: var(--cloud-burst);

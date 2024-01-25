@@ -18,60 +18,57 @@ const weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?lat
 //
 const dayLimit = 5; //5-day forecast
 
-// Object
+// Object: search keep track of cityList which is the list of historic search of cities
 var search = {
-    cityList : [],
+  cityList : [],
 
-    _checkDuplicate : function(name) {
-        //  
-        for (let index = 0; index < this.cityList.length; index++) {
-          const element = this.cityList[index];
-          if (element.fullName === name) {
-            return index;          
-          }
-        };
-        return -1;
-    },
+  // _checkDuplicate: check if the name of city has been existed in the cityList, return index of found duplicate or -1 if not found.
+  _checkDuplicate : function(name) {
+          
+    for (let index = 0; index < this.cityList.length; index++) {
+      const element = this.cityList[index];
+      if (element.fullName === name) {
+        return index;          
+      }
+    };
+    return -1;
+  },
   
-      // saveNote gets note and save note to hourNotes in localStorage after transform to string.
-      // return false/true if it failed/success to save to localStorage
-    saveCity : function(city) {
-        
-        
-        
-        // check if the city has been existed. If yes, remove it.
-        var index = this._checkDuplicate(city.fullName);
-        if (index >= 0) {
-          this.cityList.splice(index,1);
-        };
+  // saveCity gets city and save city to cityList in localStorage after transform to string.
+  // return false/true if it failed/success to save to localStorage
+  saveCity : function(city) {
+    // check if the city has been existed. If yes, remove it.
+    var index = this._checkDuplicate(city.fullName);
+    if (index >= 0) {
+      this.cityList.splice(index,1);
+    };
 
-        this.cityList.push(city);
-  
-        try {
-          localStorage.setItem('cityList', JSON.stringify(this.cityList));
-          return true;
-        } catch(e) {
-          return false;
-        };
-              
-      },
+    this.cityList.push(city);
+
+    try {
+      localStorage.setItem('cityList', JSON.stringify(this.cityList));
+      return true;
+    } catch(e) {
+      return false;
+    };      
+  },
     
-    //   // loadNotes returns array of objects from cityList in localStorage.
-    loadCities : function() {
-        if (localStorage.getItem("cityList") != null) {
-            //  get string from cityList in localStorage and transform back to array of objects.
-            this.cityList = JSON.parse(localStorage.getItem("cityList"));           
-        };
-        return this.cityList;
-    },
+  // loadCities returns array of objects from cityList in localStorage.
+  loadCities : function() {
+      if (localStorage.getItem("cityList") != null) {
+          //  get string from cityList in localStorage and transform back to array of objects.
+          this.cityList = JSON.parse(localStorage.getItem("cityList"));           
+      };
+      return this.cityList;
+  },
     
-    // clearAll clears the array notes and hourNotes in localStorage
-    clearAll : function() {
-        if (this.cityList.length != 0) {
-            this.cityList.length = 0;
-        };
-        localStorage.removeItem("cityList");
-    },
+  // clearAll clears the array citys and hourcitys in localStorage
+  clearAll : function() {
+      if (this.cityList.length != 0) {
+          this.cityList.length = 0;
+      };
+      localStorage.removeItem("cityList");
+  },
 
 }
 
@@ -79,45 +76,44 @@ var search = {
 function getForecast(url, city) {
   var queryURL = url + city.lat + "&lon=" + city.lon + "&appid=" + APIKey;
     
-    fetch(queryURL)
-    .then(function (response) {
-      if (response.ok) {
-        // console.log(response);
-        response.json().then(function (data) {
-          // console.log(data);
-          renderForecastResult(data, city.fullName);
-        });
-      } else {
-        alert('Error: ' + response.statusText);
-        // modalBody.textContent = "Please input the correct city name"
-      }
-    })
-    .catch(function (error) {
-      alert('Unable to connect to Open Weather Map');
-    });
+  fetch(queryURL)
+  .then(function (response) {
+    if (response.ok) {
+      // console.log(response);
+      response.json().then(function (data) {
+        // console.log(data);
+        renderForecastResult(data, city.fullName);
+      });
+    } else {
+      alert('Error: ' + response.statusText);
+      // modalBody.textContent = "Please input the correct city name"
+    }
+  })
+  .catch(function (error) {
+    alert('Unable to connect to Open Weather Map');
+  });
 }
 
 // getCities: get citis list with lat and lon from Weather API
 function getCities(url, cityName, limit) {
-    //code here
-    var queryURL = url + cityName + "&limit=" + limit + "&appid=" + APIKey;
-    
-    fetch(queryURL)
-    .then(function (response) {
-      if (response.ok) {
-        // console.log(response);
-        response.json().then(function (data) {
-          // console.log(data);
-          renderModalBody(data, cityName);
-        });
-      } else {
-        //alert('Error: ' + response.statusText);
-        modalBody.textContent = "Please input the correct city name"
-      }
-    })
-    .catch(function (error) {
-      alert('Unable to connect to Open Weather Map');
-    });
+  var queryURL = url + cityName + "&limit=" + limit + "&appid=" + APIKey;
+  
+  fetch(queryURL)
+  .then(function (response) {
+    if (response.ok) {
+      // console.log(response);
+      response.json().then(function (data) {
+        // console.log(data);
+        renderModalBody(data, cityName);
+      });
+    } else {
+      //alert('Error: ' + response.statusText);
+      modalBody.textContent = "Please input the correct city name"
+    }
+  })
+  .catch(function (error) {
+    alert('Unable to connect to Open Weather Map');
+  });
 }
 
 // renderForecastResult(data, city.fullName): display current and 5 Day weather forecast
@@ -240,35 +236,24 @@ function renderForecastResult(data, cityName) {
 
 // renderHistorySearch: display list of history search of city.
 function renderHistorySearch() {
-    if (search.cityList.length === 0) {
-        historySearchEl.innerHTML = "";
-        return;
-    };
-    
+  if (search.cityList.length === 0) {
     historySearchEl.innerHTML = "";
-    var cities = search.loadCities();
-    for (var i = cities.length - 1; i >= 0; i--) {
-        // var city = {
-        //     name : cities[i].name,
-        //     state : cities[i].state,
-        //     country : cities[i].country,
-        //     fullName : cities[i].name + '/' + cities[i].state + ', ' + cities[i].country,
-        //     lat : cities[i].lat,
-        //     lon : cities[i].lon,
-        // }        
-            
-        var cityEl = document.createElement('a');
-        // cityEl.classList = 'list-item flex-row justify-space-between align-center bg-secondary-subtle';
-        cityEl.classList = 'text-center bg-secondary-subtle';
-        cityEl.setAttribute("data-lat", cities[i].lat);
-        cityEl.setAttribute("data-lon", cities[i].lon);
-        cityEl.setAttribute("data-name", cities[i].fullName);
-        // cityEl.setAttribute("data-bs-dismiss", "modal");
-        
-        cityEl.textContent = cities[i].fullName;
+    return;
+  };
 
-        historySearchEl.appendChild(cityEl);
-    };    
+  historySearchEl.innerHTML = "";
+  var cities = search.loadCities();
+  for (var i = cities.length - 1; i >= 0; i--) {
+    var cityEl = document.createElement('button');
+    cityEl.classList = 'text-center btn btn-secondary';
+    cityEl.setAttribute("data-lat", cities[i].lat);
+    cityEl.setAttribute("data-lon", cities[i].lon);
+    cityEl.setAttribute("data-name", cities[i].fullName);
+    
+    cityEl.textContent = cities[i].fullName;
+
+    historySearchEl.appendChild(cityEl);
+  };
 }
 
 // renderModalBody: display lat and lon of cities on modalBody
@@ -279,8 +264,6 @@ function renderModalBody(cities, searchTerm) {
     modalBody.textContent = 'No city found.';
     return;
   };
-    
-  //citySearchTerm.textContent = searchTerm;
     
   for (var i = 0; i < cities.length; i++) {
     var city = {
@@ -315,88 +298,61 @@ function init() {
 
 }
 
-// var searchButtonHandler = function (event) {
-//     event.preventDefault();
-
-//     var city = searchInputEl.val().trim();
-//     console.log(city);
-// }
-// searchBtnEl.on("click", searchButtonHandler);
-
 // catch click on historySearchEl
 historySearchEl.addEventListener('click', function (event) {
   var element =event.target;
-  // console.log(element);
   if (element.matches("a") === true) {
-    // get forecast from Weather API
+    var city = {
+      fullName : element.getAttribute("data-name"),
+      lat : element.getAttribute("data-lat"),
+      lon : element.getAttribute("data-lon"),
+    };
+    getForecast(weatherForecastURL, city);
+
+    search.saveCity(city);
+    renderHistorySearch();
+  }
+});
+
+// catch click on modalBody
+modalBody.addEventListener('click', function (event) {
+  var element = event.target;
+  if (element.matches("a") === true) {
+    // render historySearch
     var city = {
         fullName : element.getAttribute("data-name"),
         lat : element.getAttribute("data-lat"),
         lon : element.getAttribute("data-lon"),
     };
-    // console.log(city);
+    search.saveCity(city);
+
+    renderHistorySearch();
     getForecast(weatherForecastURL, city);
+  };
 
-    // historySearchEl.innerHTML = "";
-    // renderHistorySearch();
-
-    // getWeatherForecast
-}
+  modalBody.innerHTML = "";
 });
-
-// catch click on modalBody
-modalBody.addEventListener('click', function (event) {
-    //console.log(event.target);
-    var element = event.target;
-    if (element.matches("a") === true) {
-        // render historySearch
-        var city = {
-            fullName : element.getAttribute("data-name"),
-            lat : element.getAttribute("data-lat"),
-            lon : element.getAttribute("data-lon"),
-        };
-        // console.log(city);
-        search.saveCity(city);
-
-        // historySearchEl.innerHTML = "";
-        renderHistorySearch();
-        getForecast(weatherForecastURL, city);
-
-        // getWeatherForecast
-    };
-
-    modalBody.innerHTML = "";
-});
-// modalBody.addEventListener('hidden.bs.modal', event => {
-//     console.log(event.target);
-// });
 
 // searchButtonHandler
 if (searchModal) {
   searchModal.addEventListener('show.bs.modal', event => {
     // Button that triggered the modal
-    const button = event.relatedTarget
+    const button = event.relatedTarget;
     // Extract info from data-bs-* attributes
     // const recipient = button.getAttribute('data-bs-whatever')
     // If necessary, you could initiate an Ajax request here
     // and then do the updating in a callback.
 
     // Update the modal's content.
-    
-
-    // modalTitle.textContent = `New message to ${recipient}`
-    // modalBodyInput.value = recipient
-
     var city = searchInputEl.val().trim();
     if (city) {
-        // get lat and lon for city & display 5 results on the modalBody
-        getCities(geoCodingURL, city, geoCodingLimit);
+      // get lat and lon for city & display 5 results on the modalBody
+      getCities(geoCodingURL, city, geoCodingLimit);
 
-        //modalBody.textContent = city;        
+      //modalBody.textContent = city;        
     } else {
-        modalBody.textContent = "Please input the correct city name"
-    }
-    console.log(city);
+      modalBody.textContent = "Please input the correct city name";
+    };
   })
 };
 
