@@ -301,7 +301,7 @@ function init() {
 // catch click on historySearchEl
 historySearchEl.addEventListener('click', function (event) {
   var element =event.target;
-  if (element.matches("a") === true) {
+  if (element.matches("button") === true) {
     var city = {
       fullName : element.getAttribute("data-name"),
       lat : element.getAttribute("data-lat"),
