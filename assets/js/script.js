@@ -12,7 +12,7 @@ const modalBody = searchModal.querySelector('.modal-body');
 // Weather API
 const APIKey = "4e288eceaa29829b0c7a261ce2cac83c";
 const geoCodingLimit = 5;
-const geoCodingURL = "http://api.openweathermap.org/geo/1.0/direct?q="
+const geoCodingURL = "https://api.openweathermap.org/geo/1.0/direct?q="
 const weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?lat=";
 
 //
