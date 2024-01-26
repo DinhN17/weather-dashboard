@@ -286,17 +286,22 @@ function renderModalBody(cities, searchTerm) {
 }
 
 function init() {
-  search.loadCities();
+  var cities = search.loadCities();
   renderHistorySearch();
   
-  var city = {
-    fullName : "Adelaide",
-    lat : "-34.9281805",
-    lon : "138.5999312",
+  // display forecast for the recently city of previous search, if not display Adelaide city
+  if (search.cityList.length === 0) {
+    var city = {
+      fullName : "Adelaide",
+      lat : "-34.9281805",
+      lon : "138.5999312",
+    };
+    getForecast(weatherForecastURL, city);
+    
+  } else {
+    getForecast(weatherForecastURL, search.cityList[search.cityList.length - 1]);
   };
-  getForecast(weatherForecastURL, city);
-
-}
+};
 
 // catch click on historySearchEl
 historySearchEl.addEventListener('click', function (event) {
