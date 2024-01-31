@@ -2,7 +2,7 @@
 
 ## Description
 
-This work day scheduler page was created as a weather dasboard application that allows a user to search 5-day weather forecast for a city and save the city to check weather later. It is a webpage run in the browser and feature dynamically updated HTML and CSS.
+This web page was created as a weather dasboard application that allows a user to search 5-day weather forecast for a city and save the city to check weather later. It runs in the browser and feature dynamically updated HTML and CSS.
 
 ## Screenshot
 
